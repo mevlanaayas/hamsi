@@ -1,0 +1,58 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+    id "org.sonarqube" version "3.0"
+	id "net.ltgt.errorprone" version "2.0.1" apply true
+}
+
+group = 'com.trendyol'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	annotationProcessor "com.uber.piranha:piranha:0.1.4"
+	errorprone "com.google.errorprone:error_prone_core:2.4.0"
+	errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+	def errorProneEnabled = project.hasProperty("ERRORPRONE_ENABLED") && project.property("ERRORPRONE_ENABLED")
+	options.errorprone.enabled = errorProneEnabled
+
+	def flagName = "TEST"
+	if (project.hasProperty("TOGGLE_NAME")) {
+		flagName = project.property("TOGGLE_NAME")
+	}
+
+	logger.warn(String.format("ERRORPRONE_ENABLED: %b", errorProneEnabled))
+	if (errorProneEnabled) {
+		logger.warn(String.format("Error prone enabled! Piranha will check for flag name: %s", flagName))
+		it.options.errorprone.errorproneArgs.add("-XepPatchChecks:Piranha")
+		it.options.errorprone.errorproneArgs.add("-XepPatchLocation:IN_PLACE")
+		it.options.errorprone.errorproneArgs.add("-XepOpt:Piranha:Config=config/properties.json")
+		it.options.errorprone.errorproneArgs.add("-XepOpt:Piranha:IsTreated=true")
+		it.options.errorprone.errorproneArgs.add(String.format("-XepOpt:Piranha:FlagName=%s", flagName))
+	}
+}

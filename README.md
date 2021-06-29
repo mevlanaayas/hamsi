@@ -1,0 +1,1 @@
+`./gradlew build -PERRORPRONE_ENABLED=true -PTOGGLE_NAME=ENABLE_T`

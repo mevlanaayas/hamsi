@@ -1,0 +1,12 @@
+{
+  "methodProperties": [
+    {
+      "methodName": "flagEnabled",
+      "flagType": "treated",
+      "argumentIndex": 0,
+      "receiverType": "com.trendyol.javasonartest.flag.FlagApi"
+    }
+  ],
+  "linkURL": "https://232af94dc0e7b35e33f736ebf7329eee.m.pipedream.net",
+  "annotations": ["ToggleTesting"]
+}

@@ -1,0 +1,7 @@
+variables:
+  TOGGLE_FILE: ./toggle.csv
+
+include:
+  - project: 'payment/base/pipeline'
+    ref: feature/piranha
+    file: 'templates/piranha/gradle.yml'
